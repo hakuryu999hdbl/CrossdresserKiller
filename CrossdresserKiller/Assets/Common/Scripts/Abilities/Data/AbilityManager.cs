@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace OctoberStudio.Abilities
@@ -80,10 +80,15 @@ namespace OctoberStudio.Abilities
             }
         }
 
+
+        // 管理玩家拥有的技能,增加新技能
         public void AddAbility(AbilityData abilityData, int level = 0)
         {
-            IAbilityBehavior ability = Instantiate(abilityData.Prefab).GetComponent<IAbilityBehavior>();
-            ability.Init(abilityData, level);
+
+            Debug.Log("获得新技能");
+
+            IAbilityBehavior ability = Instantiate(abilityData.Prefab).GetComponent<IAbilityBehavior>();//玩家获得技能（如火球）并实例化它
+            ability.Init(abilityData, level);//会调用火球技能的 MeteorAbilityBehavior 的 Init()，然后就启动内部的 StartCoroutine(AbilityCoroutine())，不断发射火球
 
             if (abilityData.IsEvolution)
             {

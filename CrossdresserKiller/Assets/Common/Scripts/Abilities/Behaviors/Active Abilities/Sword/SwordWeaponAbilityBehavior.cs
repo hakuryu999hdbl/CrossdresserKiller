@@ -1,4 +1,4 @@
-using OctoberStudio.Easing;
+﻿using OctoberStudio.Easing;
 using OctoberStudio.Pool;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,6 +45,9 @@ namespace OctoberStudio.Abilities
             {
                 for(int i = 0; i < AbilityLevel.SlashesCount; i++)
                 {
+                    // ✅ 在攻击这一帧前调用动画
+                    PlayerBehavior.Player.PlayAttackAnimation();
+
                     var slash = slashPool.GetEntity();
 
                     slash.transform.position = PlayerBehavior.CenterPosition;

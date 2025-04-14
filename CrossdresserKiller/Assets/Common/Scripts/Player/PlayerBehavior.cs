@@ -13,30 +13,33 @@ namespace OctoberStudio
 {
     public class PlayerBehavior : MonoBehaviour
     {
+        //用于播放音效时的哈希标识符（避免用字符串）
         private static readonly int DEATH_HASH = "Death".GetHashCode();
         private static readonly int REVIVE_HASH = "Revive".GetHashCode();
         private static readonly int RECEIVING_DAMAGE_HASH = "Receiving Damage".GetHashCode();
 
+        //单例模式，方便全局访问当前玩家对象
         private static PlayerBehavior instance;
         public static PlayerBehavior Player => instance;
 
+        //角色数据数据库，提供选中角色Prefab等数据源
         [SerializeField] CharactersDatabase charactersDatabase;
 
         [Header("Stats")]
-        [SerializeField, Min(0.01f)] float speed = 2;
-        [SerializeField, Min(0.1f)] float defaultMagnetRadius = 0.75f;
-        [SerializeField, Min(1f)] float xpMultiplier = 1;
-        [SerializeField, Range(0.1f, 1f)] float cooldownMultiplier = 1;
-        [SerializeField, Range(0, 100)] int initialDamageReductionPercent = 0;
-        [SerializeField, Min(1f)] float initialProjectileSpeedMultiplier = 1;
-        [SerializeField, Min(1f)] float initialSizeMultiplier = 1f;
-        [SerializeField, Min(1f)] float initialDurationMultiplier = 1f;
-        [SerializeField, Min(1f)] float initialGoldMultiplier = 1;
+        [SerializeField, Min(0.01f)] float speed = 2; // 基础移动速度
+        [SerializeField, Min(0.1f)] float defaultMagnetRadius = 0.75f; // 吸经验半径
+        [SerializeField, Min(1f)] float xpMultiplier = 1;// 经验倍率
+        [SerializeField, Range(0.1f, 1f)] float cooldownMultiplier = 1; // 冷却时间倍率
+        [SerializeField, Range(0, 100)] int initialDamageReductionPercent = 0; // 初始减伤百分比
+        [SerializeField, Min(1f)] float initialProjectileSpeedMultiplier = 1; // 投射速度倍率
+        [SerializeField, Min(1f)] float initialSizeMultiplier = 1f;// 子弹大小倍率
+        [SerializeField, Min(1f)] float initialDurationMultiplier = 1f;// 持续时间倍率
+        [SerializeField, Min(1f)] float initialGoldMultiplier = 1;// 金币倍率
 
-        [Header("References")]
-        [SerializeField] HealthbarBehavior healthbar;
-        [SerializeField] Transform centerPoint;
-        [SerializeField] PlayerEnemyCollisionHelper collisionHelper;
+        [Header("References")]//组件引用
+        [SerializeField] HealthbarBehavior healthbar;// 血条组件
+        [SerializeField] Transform centerPoint; // 玩家中心点
+        [SerializeField] PlayerEnemyCollisionHelper collisionHelper;// 碰撞辅助
 
         public static Transform CenterTransform => instance.centerPoint;
         public static Vector2 CenterPosition => instance.centerPoint.position;
@@ -63,9 +66,9 @@ namespace OctoberStudio
 
         public event UnityAction onPlayerDied;
 
-        public float Damage { get; private set; }
-        public float MagnetRadiusSqr { get; private set; }
-        public float Speed { get; private set; }
+        public float Damage { get; private set; } // 当前攻击力
+        public float MagnetRadiusSqr { get; private set; } // 磁力半径平方
+        public float Speed { get; private set; } // 当前移动速度
 
         public float XPMultiplier { get; private set; }
         public float CooldownMultiplier { get; private set; }
@@ -75,8 +78,8 @@ namespace OctoberStudio
         public float DurationMultiplier { get; private set; }
         public float GoldMultiplier { get; private set; }
 
-        public Vector2 LookDirection { get; private set; }
-        public bool IsMovingAlowed { get; set; }
+        public Vector2 LookDirection { get; private set; }// 当前朝向
+        public bool IsMovingAlowed { get; set; } // 是否允许移动
 
         private bool invincible = false;
 
@@ -130,17 +133,13 @@ namespace OctoberStudio
 
         }
 
-       //public void OnRun(InputValue value)
-       //{
-       //    isRunning = value.isPressed;
-       //}
 
 
         private void Update()
         {
             if (healthbar.IsZero) return;
 
-            foreach(var enemy in enemiesInside)
+            foreach (var enemy in enemiesInside)
             {
                 if (Time.time - enemy.LastTimeDamagedPlayer > enemyInsideDamageInterval)
                 {
@@ -152,7 +151,6 @@ namespace OctoberStudio
             if (!IsMovingAlowed) return;
 
             var input = GameController.InputManager.MovementValue;
-
 
 
             // 记录原始输入值（四向判断用）
@@ -172,8 +170,8 @@ namespace OctoberStudio
             {
                 StopX = inputX;
                 StopY = inputY;
-        
-             
+
+
             }
 
             // 传给 Spine 动画机
@@ -201,17 +199,22 @@ namespace OctoberStudio
             if (keyboard != null && keyboard.spaceKey.isPressed)
                 isRunning = true;
 
-
+            //InputManager当中绑定了键盘空格和手柄肩键
             if (isRunning)
             {
                 moveSpeed = 2;
             }
+
+
+
 
             // 其他平台（如安卓）根据输入强度判断是否为跑（这一段在PC端会被注释掉）
             //if (magnitude > 0.8)
             //{
             //    moveSpeed = 2;
             //}
+
+
 
 
             // 如果没输入，设置为静止
@@ -221,10 +224,6 @@ namespace OctoberStudio
             }
 
             anim.SetInteger("Speed", moveSpeed);
-
-
-
-
 
 
 
@@ -257,6 +256,26 @@ namespace OctoberStudio
                 LookDirection = input.normalized;
             }
         }
+
+        public void PlayAttackAnimation()
+        {
+            float magnitude = GameController.InputManager.MovementValue.magnitude;
+
+            if (magnitude > 0.1f)
+            {
+                anim.SetInteger("Speed", 3); // 移动攻击
+                Debug.Log("移动攻击");
+            }
+            else
+            {
+                anim.SetInteger("Speed", 4); // 静止攻击
+                Debug.Log("静止攻击");
+            }
+
+            
+        }
+
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsInsideMagnetRadius(Transform target)
@@ -306,7 +325,7 @@ namespace OctoberStudio
             if (GameController.UpgradesManager.IsUpgradeAquired(UpgradeType.Armor))
             {
                 DamageReductionMultiplier *= GameController.UpgradesManager.GetUpgadeValue(UpgradeType.Armor);
-            } 
+            }
         }
 
         public void RecalculateProjectileSpeedMultiplier(float projectileSpeedMultiplier)
@@ -444,14 +463,15 @@ namespace OctoberStudio
                 }).SetUnscaledTime(true);
 
                 GameController.VibrationManager.StrongVibration();
-            } else
+            }
+            else
             {
-                if(Time.time - lastTimeVibrated > 0.05f)
+                if (Time.time - lastTimeVibrated > 0.05f)
                 {
                     GameController.VibrationManager.LightVibration();
                     lastTimeVibrated = Time.time;
                 }
-                
+
                 GameController.AudioManager.PlaySound(RECEIVING_DAMAGE_HASH);
             }
         }

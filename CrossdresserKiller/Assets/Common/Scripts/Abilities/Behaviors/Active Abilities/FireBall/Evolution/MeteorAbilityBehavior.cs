@@ -1,4 +1,4 @@
-using OctoberStudio.Pool;
+﻿using OctoberStudio.Pool;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,8 +30,11 @@ namespace OctoberStudio.Abilities
             abilityCoroutine = StartCoroutine(AbilityCoroutine());
         }
 
+
         private IEnumerator AbilityCoroutine()
         {
+
+
             while (true)
             {
                 for (int i = 0; i < AbilityLevel.ProjectilesCount; i++)

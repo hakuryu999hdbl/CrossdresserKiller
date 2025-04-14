@@ -1,4 +1,4 @@
-using OctoberStudio.Pool;
+﻿using OctoberStudio.Pool;
 using OctoberStudio.Easing;
 using System.Collections;
 using System.Collections.Generic;
@@ -41,10 +41,13 @@ namespace OctoberStudio.Abilities
             if (abilityCoroutine != null) Disable();
 
             abilityCoroutine = StartCoroutine(AbilityCoroutine());
+
         }
 
         private IEnumerator AbilityCoroutine()
         {
+
+
             var lastTimeSpawned = Time.time - AbilityCooldown;
 
             while (true)

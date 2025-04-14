@@ -1,4 +1,4 @@
-using OctoberStudio.Pool;
+﻿using OctoberStudio.Pool;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +33,7 @@ namespace OctoberStudio.Abilities
 
         private IEnumerator AbilityCoroutine()
         {
+
             while (true)
             {
                 SpawnProjectile(0);

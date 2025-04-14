@@ -1,4 +1,4 @@
-using OctoberStudio.Easing;
+﻿using OctoberStudio.Easing;
 using OctoberStudio.Pool;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,6 +38,7 @@ namespace OctoberStudio.Abilities
 
         private IEnumerator AbilityCoroutine()
         {
+
             while (true)
             {
                 for (int i = 0; i < AbilityLevel.LightningsCount; i++)

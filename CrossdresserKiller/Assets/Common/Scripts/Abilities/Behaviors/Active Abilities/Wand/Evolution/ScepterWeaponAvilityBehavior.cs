@@ -1,4 +1,4 @@
-using OctoberStudio.Easing;
+﻿using OctoberStudio.Easing;
 using OctoberStudio.Extensions;
 using OctoberStudio.Pool;
 using System.Collections;
@@ -38,6 +38,7 @@ namespace OctoberStudio.Abilities
 
         private IEnumerator AbilityCoroutine()
         {
+
             var lastTimeSpawned = Time.time - AbilityCooldown;
 
             while (true)
